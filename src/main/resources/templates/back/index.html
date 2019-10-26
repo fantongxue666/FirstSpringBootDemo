@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8" />
+		<title>U袋网卖家管理后台</title>
+		<script th:src="@{/js/jquery.1.12.4.min.js}" charset="UTF-8"></script>
+		<script>
+			$(function () {
+				$.post(
+				    "/demo/getName",
+					function (data) {
+					//alert(JSON.stringify(data));
+						$("#span").html(data.name);
+                    },
+					"json"
+				);
+				$.post(
+				    "/power/tree",
+					function (data) {
+				        var str="";
+
+				        //##################################
+						for(var i=0;i<data.length;i++){
+						 if(data[i].parentId==0){
+						     str+=' <li class="seconddd"><a onclick="shows('+i+')" href="#">'+data[i].name+'</a><ul class="ulObj"></ul></li>';
+                         }
+						}
+						//##################################
+                        $("#menu").append(str);
+
+						//##################################
+						for(var k=0;k<data.length;k++){
+                            var strSe="";
+                            if(data[k].children!=null){
+                                // alert(data[i].children.length);
+                                for (var j=0;j<data[k].children.length;j++){
+
+                                    strSe+='<li><a target="iframe" href="'+data[k].children[j].url+'">'+data[k].children[j].name+'</a></li>';
+
+                                }
+
+                            }else if(data[k].children==null){
+
+							}
+                             $(".seconddd .ulObj").eq(k).append(strSe);
+						}
+						//###################################
+
+                    },
+					"json"
+				);
+
+            });
+            function shows(i) {
+				 $(".ulObj").eq(i).toggle();
+            }
+		</script>
+
+		<style>
+			.ulObj{
+				display: none;
+			}
+			#h3{
+				text-align: center;
+				font-family: "楷体";
+			}
+			#main{
+				width: 1230px;
+				height: 550px;
+				border: 1px solid burlywood;
+				margin: 30px auto;
+			}
+			#quit{
+				position: absolute;
+				top: 40px;
+				right: 150px;
+			}
+			#iframe{
+				position: absolute;
+				top: 71px;
+				right: 66px;
+			}
+			#lianjie nav{
+				margin-top: 10px;
+			}
+			#lianjie{
+				margin-left:30px ;
+			}
+		</style>
+	</head>
+	<body>
+		<h3 id="h3">U袋网卖家管理后台</h3>
+		<div id="quit">
+			卖家：<span id="span"></span>
+		<a href="/demo/exit">退出</a>
+		</div>
+		<div id="main">
+			<div id="lianjie">
+				<!--<nav><a href="/demo/page" target="iframe">商品管理</a></nav>-->
+				<!--<nav><a href="" target="iframe">会员管理</a></nav>-->
+				<!--<nav><a href="/demo/getOrder" target="iframe">处理订单</a></nav>-->
+				<!--<nav><a href="" target="iframe">订单审核</a></nav>-->
+				<!--<nav><a href="" target="iframe">取消订单记录</a></nav>-->
+				<div id="tree">
+					<ul id="menu">
+						<!--    <li><a href="#">个人报表</a>-->
+						<!--            <ul><li><a href="#">文件一</a></li><li><a href="#">文件二</a></li><li><a href="#">文件三</a></li></ul>-->
+						<!--    </li>-->
+						<!--    <li><a href="#">个人收藏</a></li>-->
+						<!--    <li><a href="#">我的分享</a></li>-->
+						<!--    <li><a href="#">图库</a></li>-->
+						<!--    <li><a href="#">成长记录</a></li>-->
+						<!--    <li><a href="#">账户信息</a></li>-->
+					</ul>
+				</div>
+
+
+			</div>
+			<iframe name="iframe" id="iframe" src="/demo/page" width="1015px" height="545px"></iframe>
+		</div>
+	</body>
+</html>

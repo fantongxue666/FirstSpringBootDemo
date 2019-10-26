@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" xmlns:th="www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}">
+	<link rel="stylesheet" th:href="@{/css/iconfont.css}">
+	<link rel="stylesheet" th:href="@{/css/global.css}">
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/bootstrap-theme.min.css}">
+	<link rel="stylesheet" th:href="@{/css/swiper.min.css}">
+	<link rel="stylesheet" th:href="@{/css/styles.css}">
+	<script th:src="@{/js/jquery.1.12.4.min.js}" charset="UTF-8"></script>
+	<script th:src="@{/js/bootstrap.min.js}" charset="UTF-8"></script>
+	<script th:src="@{/js/swiper.min.js}" charset="UTF-8"></script>
+	<script th:src="@{/js/global.js}" charset="UTF-8"></script>
+	<script th:src="@{/js/jquery.DJMask.2.1.1.js}" charset="UTF-8"></script>
+	<style>
+
+	</style>
+	<style>
+		#img{
+			width: 200px;
+			height: 200px;
+		}
+		#colorAndSize{
+			margin-bottom: 0;
+		}
+	</style>
+	<script>
+		var color;
+		var size;
+		var i;
+		var spID;
+		$(function () {
+            $.post(
+                "/demo/getSession",
+                function (data) {
+                    //alert(JSON.stringify(data));
+                    var str="";
+                    if(data.account==null){
+                        str='<a href="/demo/login"><span class="cr">登录</span></a>\n' +
+                            '\t\t\t\t<a href="/demo/register">注册</a>';
+
+
+                    }else{
+                        str='<a href="/demo/findOrderByAccount">我的U袋</a>\n' +
+                            '\t\t\t\t<a href="udai_order.html">我的订单</a>\n' +
+                            '\t\t\t\t<a href="udai_integral.html">积分平台</a>\n' +
+                            '\t\t\t\t<a href="/demo/quit">退出</a>';
+                    }
+                    var account=data.account;
+                    $.post(
+                        "/demo/getMRaddress",
+                        {account:account},
+                        function (data) {
+                            //alert(JSON.stringify(data));
+                           if(data!=""){
+                               $("#location").html(data[0].location);
+                               $("#detail").html(data[0].detail);
+						   }else{
+                               alert("您没有添加收货地址，请先添加收获地址；或者是您的地址没有设置成默认地址，请您设置默认地址");
+                               location.href="/demo/addAddress?account="+account;
+                               return false;
+						   }
+                        },
+                        "json"
+                    );
+                    $("#toadd").attr("href",'/demo/addAddress?account='+account);
+                    $("#first").append(str);
+                },
+                "json"
+            );
+			//得到颜色尺码数量，从session取
+			$.post(
+			    "/demo/getSecondSession",
+				{},
+				function (data) {
+				//alert(JSON.stringify(data));
+				color=data.color;
+				size=data.size;
+				i=data.i;
+				id=data.spID;
+				spID=parseInt(id);
+				//-----------------
+					var tempStr="";
+                    $.post(
+                        "/demo/getPCsecond",
+                        {ids:spID},
+                        function (data) {
+                           // alert(JSON.stringify(data));
+                            $("#spName").html(data[0].name);
+                            var path=data[0].picpath;
+                            var str="/images/";
+                            str+=path;
+                            // alert(str);
+                            $("#img").attr("src",str);
+                            $("#colorAndSize").html("颜色分类："+color+"   尺码："+size);
+                            $("#price").html(data[0].price);
+                            $("#i").html(i);
+                            var op=data[0].price;
+                            oe=i*op;
+                            $("#allMoney").html("￥"+oe);
+                            $("#heji").html("￥"+oe);
+                            var oo=data[0].score;
+                            yo=i*oo;
+                            $("#jifen").html(yo);
+                        },
+                        "json"
+                    );
+				//----------------
+
+                },
+				"json"
+			);
+            $.post(
+                "/demo/getNum",
+                {},
+                function (data) {
+                    $("#gouwuche").attr("data-badge",data);
+                },
+                "json"
+            );
+
+
+        });
+	</script>
+	<title>U袋网支付</title>
+</head>
+<body>
+	<!-- 顶部tab -->
+	<div class="tab-header">
+		<div class="inner">
+			<div class="pull-left">
+				<div class="pull-left">嗨，欢迎来到<span class="cr">U袋网</span></div>
+				<a href="agent_level.html">网店代销</a>
+				<a href="temp_article/udai_article4.html">帮助中心</a>
+			</div>
+			<div id="first" class="pull-right">
+				
+			</div>
+		</div>
+	</div>
+	<!-- 顶部标题 -->
+	<div class="bgf5 clearfix">
+		<div class="top-user">
+			<div class="inner">
+				<a class="logo" href="/"><img th:src="@{/images/icons/logo.jpg}" alt="U袋网" class="cover"></a>
+				<div class="title">购物车</div>
+			</div>
+		</div>
+	</div>
+	<div class="content clearfix bgf5">
+		<section class="user-center inner clearfix">
+			<div class="user-content__box clearfix bgf">
+				<div class="title">购物车-确认支付 </div>
+				<div class="shop-title">收货地址</div>
+				<form action="" class="shopcart-form__box">
+					<div class="addr-radio">
+						<div class="radio-line radio-box active">
+							<label class="radio-label ep" title="福建省 福州市 鼓楼区 温泉街道 五四路159号世界金龙大厦20层B北 福州rpg.blue网络 （喵喵喵 收） 153****9999">
+								<input name="addr" checked="" value="0" autocomplete="off" type="radio"><i class="iconfont icon-radio"></i>
+								<span id="location"></span><span id="detail"></span>
+							</label>
+							<!--<a href="javascript:;" class="default">默认地址</a>
+							<a href="udai_address_edit.html" class="edit">修改</a>-->
+						</div>
+
+
+
+					</div>
+					<div class="add_addr"><a id="toadd">地址设置</a></div>
+					<div class="shop-title">确认订单</div>
+					<div class="shop-order__detail">
+						<table class="table">
+							<thead>
+								<tr>
+									<th width="120"></th>
+									<th width="150">商品信息</th>
+									<th width="120">单价</th>
+									<th width="200">数量</th>
+									<th width="300">颜色/尺码</th>
+									<th width="80">总价</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th scope="row"><a href="item_show.html"><div class="img"><img id="img"/></div></a></th>
+									<td>
+										<div id="spName" class="name ep3"></div>
+
+
+									</td>
+									<td id="price"></td>
+									<td id="i"></td>
+									<td><div id="colorAndSize"></div></td>
+									<td id="allMoney"></td>
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+					<div class="shop-cart__info clearfix">
+
+						<div class="pull-right text-right">
+							<div class="form-group">
+
+
+							</div>
+							<script>
+								$('#coupon').bind('change',function() {
+									console.log($(this).val());
+								})
+							</script>
+
+							<div class="info-line"><!--<span class="favour-value">已优惠 ¥2.0</span>-->合计：<b id="heji" class="fz18 cr"></b></div>
+							<div class="info-line fz12 c9">（可获 <span id="jifen" class="c6"></span> 积分）</div>
+						</div>
+					</div>
+					<div class="user-form-group shopcart-submit">
+						<button onclick="butt()" type="button" class="btn">继续支付</button>
+					</div>
+					<script>
+						$(document).ready(function(){
+							$(this).on('change','input',function() {
+								$(this).parents('.radio-box').addClass('active').siblings().removeClass('active');
+							})
+						});
+						function butt() {
+						    var password=prompt("请输入支付密码");
+							if(password!="123456"){
+							    alert("支付失败！密码错误");
+							    return false;
+							}else{
+                                //alert("支付成功");
+							    var location=$("#location").html();
+							    var detail=$("#detail").html();
+							    var locationAndDetails=location+detail;
+								var spName=$("#spName").html();
+								var price=$("#price").html();
+								var i=$("#i").html();
+								var colorAndSize=$("#colorAndSize").html();
+								var color=colorAndSize.substr(5,2);
+								var size=colorAndSize.substr(14,2);
+								var mone=$("#heji").html();
+								var money=mone.substr(1);
+								var jifen=$("#jifen").html();
+                                var src=document.getElementById("img").src;
+                                var newSrc=src.substr(29);
+                               // alert(newSrc);
+								/*var src=$("#img").attr(src);*/
+								$.post(
+								    "/demo/getSession",
+									{},
+									function (data) {
+									var zhanghao=data.account;
+										$.post(
+										    "/demo/makeOrder",
+											{name:spName,color:color,price:price,account:zhanghao,address:locationAndDetails,score:jifen,number:i,src:newSrc},
+											function (result) {
+												alert("下单成功");
+                                            },
+											"json"
+										);
+                                    },
+									"json"
+								);
+								return true;
+
+							}
+                        }
+					</script>
+				</form>
+			</div>
+		</section>
+	</div>
+	<!-- 右侧菜单 -->
+	<div class="right-nav">
+		<ul class="r-with-gotop">
+			<li class="r-toolbar-item">
+				<a href="/demo/myUD" class="r-item-hd">
+					<i class="iconfont icon-user" data-badge="0"></i>
+					<div class="r-tip__box"><span class="r-tip-text">用户中心</span></div>
+				</a>
+			</li>
+			<li class="r-toolbar-item">
+				<a href="/demo/getShoppingCar" class="r-item-hd">
+					<i id="gouwuche" class="iconfont icon-cart"></i>
+					<div class="r-tip__box"><span class="r-tip-text">购物车</span></div>
+				</a>
+			</li>
+			<li class="r-toolbar-item">
+				<a href="udai_collection.html" class="r-item-hd">
+					<i class="iconfont icon-aixin"></i>
+					<div class="r-tip__box"><span class="r-tip-text">我的收藏</span></div>
+				</a>
+			</li>
+			<li class="r-toolbar-item">
+				<a href="" class="r-item-hd">
+					<i class="iconfont icon-liaotian"></i>
+					<div class="r-tip__box"><span class="r-tip-text">联系客服</span></div>
+				</a>
+			</li>
+			<li class="r-toolbar-item">
+				<a href="issues.html" class="r-item-hd">
+					<i class="iconfont icon-liuyan"></i>
+					<div class="r-tip__box"><span class="r-tip-text">留言反馈</span></div>
+				</a>
+			</li>
+			<li class="r-toolbar-item to-top">
+				<i class="iconfont icon-top"></i>
+				<div class="r-tip__box"><span class="r-tip-text">返回顶部</span></div>
+			</li>
+		</ul>
+		<script>
+			$(document).ready(function(){ $('.to-top').toTop({position:false}) });
+		</script>
+	</div>
+	<!-- 底部信息 -->
+	<div class="footer">
+		<div class="footer-tags">
+			<div class="tags-box inner">
+				<div class="tag-div">
+					<img th:src="@{/images/icons/footer_1.gif}" alt="厂家直供">
+				</div>
+				<div class="tag-div">
+					<img th:src="@{/images/icons/footer_2.gif}" alt="一件代发">
+				</div>
+				<div class="tag-div">
+					<img th:src="@{/images/icons/footer_3.gif}" alt="美工活动支持">
+				</div>
+				<div class="tag-div">
+					<img th:src="@{/images/icons/footer_4.gif}" alt="信誉认证">
+				</div>
+			</div>
+		</div>
+		<div class="footer-links inner">
+			<dl>
+				<dt>U袋网</dt>
+				<a href="temp_article/udai_article10.html"><dd>企业简介</dd></a>
+				<a href="temp_article/udai_article11.html"><dd>加入U袋</dd></a>
+				<a href="temp_article/udai_article12.html"><dd>隐私说明</dd></a>
+			</dl>
+			<dl>
+				<dt>服务中心</dt>
+				<a href="temp_article/udai_article1.html"><dd>售后服务</dd></a>
+				<a href="temp_article/udai_article2.html"><dd>配送服务</dd></a>
+				<a href="temp_article/udai_article3.html"><dd>用户协议</dd></a>
+				<a href="temp_article/udai_article4.html"><dd>常见问题</dd></a>
+			</dl>
+			<dl>
+				<dt>新手上路</dt>
+				<a href="temp_article/udai_article5.html"><dd>如何成为代理商</dd></a>
+				<a href="temp_article/udai_article6.html"><dd>代销商上架教程</dd></a>
+				<a href="temp_article/udai_article7.html"><dd>分销商常见问题</dd></a>
+				<a href="temp_article/udai_article8.html"><dd>付款账户</dd></a>
+			</dl>
+		</div>
+		<div class="copy-box clearfix">
+			<ul class="copy-links">
+				<a href="agent_level.html"><li>网店代销</li></a>
+				<a href="class_room.html"><li>U袋学堂</li></a>
+				<a href="udai_about.html"><li>联系我们</li></a>
+				<a href="temp_article/udai_article10.html"><li>企业简介</li></a>
+				<a href="temp_article/udai_article5.html"><li>新手上路</li></a>
+			</ul>
+			<!-- 版权 -->
+			<p class="copyright">
+				© 2005-2017 U袋网 版权所有，并保留所有权利<br>
+				ICP备案证书号：闽ICP备16015525号-2&nbsp;&nbsp;&nbsp;&nbsp;福建省宁德市福鼎市南下村小区（锦昌阁）1栋1梯602室&nbsp;&nbsp;&nbsp;&nbsp;Tel: 18650406668&nbsp;&nbsp;&nbsp;&nbsp;E-mail: 18650406668@qq.com
+			</p>
+		</div>
+	</div>
+</body>
+</html>

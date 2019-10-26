@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" xmlns:th="www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}">
+	<link rel="stylesheet" th:href="@{/css/iconfont.css}">
+	<link rel="stylesheet" th:href="@{/css/global.css}">
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/bootstrap-theme.min.css}">
+	<link rel="stylesheet" th:href="@{/css/swiper.min.css}">
+	<link rel="stylesheet" th:href="@{/css/styles.css}">
+	<script th:src="@{/js/jquery.1.12.4.min.js}" charset="UTF-8"></script>
+	<script th:src="@{/js/bootstrap.min.js}" charset="UTF-8"></script>
+	<script th:src="@{/js/swiper.min.js}" charset="UTF-8"></script>
+	<script th:src="@{/js/global.js}" charset="UTF-8"></script>
+	<script th:src="@{/js/jquery.DJMask.2.1.1.js}" charset="UTF-8"></script>
+	<style>
+		.chColor{
+			border:1px solid red;
+		}
+	</style>
+	<script>
+		var color="";
+		var size="";
+		var kucun;
+		var id;
+		var i=1;
+        $(function () {
+            var str=location.href;//获取url整条路径
+            var num=str.indexOf("=");//获取“=”之前的字符个数
+            var slice=str.slice(num+1);//截取多少个字符之后的字符串，从多少个开始截取
+			var ids=parseInt(slice);
+            //alert(ids);//获取到参数
+
+            $.post(
+                "/demo/getSession",
+                function (data) {
+                    //alert(JSON.stringify(data));
+                    var str="";
+                    if(data.account==null){
+                        str='<a href="/demo/login"><span class="cr">登录</span></a>\n' +
+                            '\t\t\t\t<a href="/demo/register">注册</a>';
+                    }else{
+                        str='<a href="/demo/findOrderByAccount">我的U袋</a>\n' +
+                            '\t\t\t\t<a href="udai_order.html">我的订单</a>\n' +
+                            '\t\t\t\t<a href="udai_integral.html">积分平台</a>\n' +
+                            '\t\t\t\t<a href="/demo/quit">退出</a>';
+                    }
+                    $("#first").append(str);
+                },
+                "json"
+			);
+            $.ajax({
+                url:"/demo/getSPMessage",
+                async:false,
+                data:{"id":ids},
+                type:"post",
+                dataType:"json",
+                success:function (data) {
+                    //alert(JSON.stringify(data));
+                    $("#kind").html(data[0].kind);
+                    $("#name").html(data[0].name);
+                    var path=data[0].picpath;
+                    var str="/images/";
+                    str+=path;
+                   // alert(str);
+                    $("#picpath").attr("src",str);
+                    $("#secondName").html(data[0].name);
+                    $("#price").html(data[0].price);
+                    $("#preprice").html(data[0].preprice);
+                    $("#preprice").html("原价："+data[0].preprice);
+                    $("#one").html("商品编号："+data[0].id);
+                    $("#baga").val(data[0].id);
+                    $("#three").html("卖家电话："+data[0].sellerAccount);
+                    $("#maijiadianhua").val(data[0].sellerAccount);
+                    $("#four").html("商品库存："+data[0].number);
+                    $("#sales").html(data[0].sales);
+                    $("#score").html(data[0].score);
+                    $("#Stock").html(data[0].number);
+                    id=data[0].id;
+                    kucun=data[0].number;
+                    //alert(data[0].time);
+                    var retime=data[0].time;
+                    var haha = retime.substr(0,10);
+                   // alert(haha);
+                    $("#two").html("上架时间："+haha);
+                }
+            });
+            $.post(
+                "/demo/getNum",
+                {},
+                function (data) {
+                    $("#ppp").html("购物车 "+data+" 件");
+                    $("#gouwuche").attr("data-badge",data);
+                },
+                "json"
+            );
+		});
+		function getColorName() {
+			color=$("#baise").html();
+			$(".aaa").css("border","1px solid red");
+            $(".bbb").css("border","");
+            $(".ccc").css("border","");
+            $(".ddd").css("border","");
+			$("#spanColor").html("选中颜色："+color);
+			$("#hiddenColor").val(color);
+		}
+        function getColorName2() {
+            color=$("#heise").html();
+            $(".bbb").css("border","1px solid red");
+            $(".aaa").css("border","");
+            $(".ccc").css("border","");
+            $(".ddd").css("border","");
+            $("#spanColor").html("选中颜色："+color);
+            $("#hiddenColor").val(color);
+        }
+        function getColorName3() {
+            color=$("#fenhongse").html();
+            $(".ccc").css("border","1px solid red");
+            $(".aaa").css("border","");
+            $(".bbb").css("border","");
+            $(".ddd").css("border","");
+            $("#spanColor").html("选中颜色："+color);
+            $("#hiddenColor").val(color);
+        }
+        function getColorName4() {
+            color=$("#huangse").html();
+            $(".ddd").css("border","1px solid red");
+            $(".aaa").css("border","");
+            $(".ccc").css("border","");
+            $(".bbb").css("border","");
+            $("#spanColor").html("选中颜色："+color);
+            $("#hiddenColor").val(color);
+        }
+        //chima
+        function getSizeName() {
+            size=$("#S").html();
+            $(".aa").css("border","1px solid red");
+            $(".bb").css("border","");
+            $(".cc").css("border","");
+            $(".dd").css("border","");
+            $("#spanSize").html("选中尺码："+size);
+            $("#hiddenSize").val(size);
+        }
+        function getSizeName2() {
+            size=$("#M").html();
+            $(".bb").css("border","1px solid red");
+            $(".aa").css("border","");
+            $(".cc").css("border","");
+            $(".dd").css("border","");
+            $("#spanSize").html("选中尺码："+size);
+            $("#hiddenSize").val(size);
+        }
+        function getSizeName3() {
+            size=$("#L").html();
+            $(".cc").css("border","1px solid red");
+            $(".aa").css("border","");
+            $(".bb").css("border","");
+            $(".dd").css("border","");
+            $("#spanSize").html("选中尺码："+size);
+            $("#hiddenSize").val(size);
+        }
+        function getSizeName4() {
+            size=$("#XL").html();
+            $(".dd").css("border","1px solid red");
+            $(".aa").css("border","");
+            $(".cc").css("border","");
+            $(".bb").css("border","");
+            $("#spanSize").html("选中尺码："+size);
+            $("#hiddenSize").val(size);
+        }
+        function addOne() {
+			 i=parseInt($("#num").val());
+			//alert("i="+i);
+			var p=parseInt($("#Stock").html());
+            //alert("p="+p);
+			i+=1;
+			if(i>p){
+			    $("#kucun").html("仓库都被你买空啦!");
+                $("#kucun").css("color","red");
+			    i=p;
+			}else{
+
+			}
+			$("#num").val(i);
+        }
+        function delOne() {
+             i=parseInt($("#num").val());
+            i-=1;
+            if(i<1){
+                i=1;
+			}
+            $("#num").val(i);
+        }
+	//写入session，并跳转到支付页面
+function togo() {
+    var maijia=$("#maijiadianhua").val();
+	$.post(
+	    "/demo/toSession",
+		{color:color,size:size,i:i,spID:id,maijia:maijia},
+		function (data) {
+        },
+		"json"
+	);
+		    location.href="/demo/toPay";
+}
+
+        //购物车
+        function shoppingCar() {
+            var id=$("#baga").val();
+            var color=$("#hiddenColor").val();
+            var size=$("#hiddenSize").val();
+             //location.href="/demo/shoppingCart?id="+id+"&color="+color+"&size="+size;
+			$.post(
+			    "/demo/shoppingCart",
+				{id:id,color:color,size:size},
+				function (data) {
+					alert("已加入购物车");
+					location.reload();
+                },
+				"json"
+			);
+        }
+	</script>
+	<title>U袋网</title>
+</head>
+<body>
+	<!-- 顶部tab -->
+	<div class="tab-header">
+		<div class="inner">
+			<div class="pull-left">
+				<div class="pull-left">嗨，欢迎来到<span class="cr">U袋网</span></div>
+				<a href="agent_level.html">网店代销</a>
+				<a href="temp_article/udai_article4.html">帮助中心</a>
+			</div>
+			<div class="pull-right" id="first">
+
+			</div>
+		</div>
+	</div>
+	<!-- 搜索栏 -->
+	<div class="top-search">
+		<div class="inner">
+			<input type="hidden" id="maijiadianhua">
+			<a class="logo" href="/"><img th:src="@{/images/icons/logo.jpg}" alt="U袋网" class="cover"></a>
+			<div class="search-box">
+				<form class="input-group">
+					<input placeholder="Ta们都在搜U袋网" type="text">
+					<span class="input-group-btn">
+						<button type="button">
+							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+						</button>
+					</span>
+				</form>
+				<p class="help-block text-nowrap">
+					<a href="">连衣裙</a>
+					<a href="">裤</a>
+					<a href="">衬衫</a>
+					<a href="">T恤</a>
+					<a href="">女包</a>
+					<a href="">家居服</a>
+					<a href="">2017新款</a>
+				</p>
+			</div>
+			<div class="cart-box">
+				<a href="/demo/getShoppingCar" class="cart-but">
+					<input type="hidden" id="baga">
+					<i class="iconfont icon-shopcart cr fz16"></i><span id="ppp"></span>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- 内页导航栏 -->
+	<div class="top-nav bg3">
+		<div class="nav-box inner">
+			<div class="all-cat">
+				<div class="title"><i class="iconfont icon-menu"></i> 全部分类</div>
+			</div>
+			<ul class="nva-list">
+				<a href="index.html"><li>首页</li></a>
+				<a href="temp_article/udai_article10.html"><li>企业简介</li></a>
+				<a href="temp_article/udai_article5.html"><li>新手上路</li></a>
+				<a href="class_room.html"><li>U袋学堂</li></a>
+				<a href="enterprise_id.html"><li>企业账号</li></a>
+				<a href="udai_contract.html"><li>诚信合约</li></a>
+				<a href="item_remove.html"><li>实时下架</li></a>
+			</ul>
+		</div>
+	</div>
+	<div class="content inner">
+		<section class="item-show__div item-show__head clearfix">
+			<div class="pull-left">
+				<ol class="breadcrumb">
+					<li><a href="index.html">首页</a></li>
+					<li><span id="kind"></span></li>
+					<li id="name" class="active"></li>
+				</ol>
+				<div class="item-pic__box" id="magnifier">
+					<div class="small-box">
+						<img id="picpath" class="cover" alt="">
+						<span class="hover"></span>
+					</div>
+					<div class="thumbnail-box">
+						<a href="javascript:;" class="btn btn-default btn-prev"></a>
+
+						<a href="javascript:;" class="btn btn-default btn-next"></a>
+					</div>
+					<!--<div class="big-box"><img th:src="@{/images/temp/S-001-1_b.jpg}" alt=""></div>-->
+				</div>
+				<script src="js/jquery.magnifier.js"></script>
+				<script>
+					$(function () {
+						$('#magnifier').magnifier();
+					});
+				</script>
+				<div class="item-info__box">
+					<div class="item-title">
+						<div id="secondName" class="name ep2"></div>
+						<div class="sale cr">冲会员吧老铁，会打折的！</div>
+					</div>
+					<div class="item-price bgf5">
+						<div class="price-box clearfix">
+							<div class="price-panel pull-left">
+								售价：<span id="price" class="price"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<s id="preprice" class="fz16 c9"></s>
+							</div>
+							<div class="vip-price-panel pull-right">
+								会员等级价格 <i class="iconfont icon-down"></i>
+								<ul class="all-price__box">
+									<!-- 登陆后可见 -->
+									<li><span class="text-justify">普通：</span>40.00元</li>
+									<li><span class="text-justify">银牌：</span>38.00元</li>
+									<li><span class="text-justify">超级：</span>28.00元</li>
+									<li><span class="text-justify">V I P：</span>19.20元</li>
+								</ul>
+							</div>
+							<script>
+								// 会员价格折叠展开
+								$(function () {
+									$('.vip-price-panel').click(function() {
+										if ($(this).hasClass('active')) {
+											$('.all-price__box').stop().slideUp('normal',function() {
+												$('.vip-price-panel').removeClass('active').find('.iconfont').removeClass('icon-up').addClass('icon-down');
+											});
+										} else {
+											$(this).addClass('active').find('.iconfont').removeClass('icon-down').addClass('icon-up');
+											$('.all-price__box').stop().slideDown('normal');
+										}
+									});
+								});
+							</script>
+						</div>
+						<div class="c6">普通会员限购 2 件，想要<u class="cr"><a href="">购买更多</a></u>？</div>
+					</div>
+					<ul class="item-ind-panel clearfix">
+						<li class="item-ind-item">
+							<span class="ind-label c9">累计销量</span>
+							<span id="sales" class="ind-count cr"></span>
+						</li>
+
+						<li class="item-ind-item">
+							<a href=""><span class="ind-label c9">赠送积分</span>
+							<span id="score" class="ind-count cg"></span></a>
+						</li>
+					</ul>
+					<div class="item-key">
+						<div class="item-sku">
+							<dl class="item-prop clearfix">
+								<dt class="item-metatit">颜色：</dt>
+								<dd><ul data-property="颜色" class="clearfix">
+									<li><a class="aaa" onclick="getColorName()" role="button" data-value="白色" aria-disabled="true">
+										<span id="baise">白色</span>
+									</a></li>
+									<li><a class="bbb" onclick="getColorName2()" role="button" data-value="黑色" aria-disabled="true">
+										<span id="heise">黑色</span>
+									</a></li>
+									<li><a class="ccc" onclick="getColorName3()" role="button" data-value="粉红色" aria-disabled="true">
+										<span id="fenhongse">粉红色</span>
+									</a></li>
+									<li><a class="ddd" onclick="getColorName4()" role="button" data-value="黄色" aria-disabled="true">
+										<span id="huangse">黄色</span>
+									</a></li>
+									<li><span id="spanColor"></span></li>
+									<input type="hidden" id="hiddenColor">
+								</ul></dd>
+							</dl>
+							<dl class="item-prop clearfix">
+								<dt class="item-metatit">尺码：</dt>
+								<dd><ul data-property="尺码" class="clearfix">
+									<li><a class="aa" onclick="getSizeName()" role="button" data-value="S" aria-disabled="true">
+										<span id="S">S</span>
+									</a></li>
+									<li><a class="bb" onclick="getSizeName2()" role="button" data-value="M" aria-disabled="true">
+										<span id="M">M</span>
+									</a></li>
+									<li><a class="cc" onclick="getSizeName3()" role="button" data-value="L" aria-disabled="true">
+										<span id="L">L</span>
+									</a></li>
+									<li><a class="dd" onclick="getSizeName4()" role="button" data-value="XL" aria-disabled="true">
+										<span id="XL">XL</span>
+									</a></li>
+									<li><span id="spanSize"></span></li>
+									<input type="hidden" id="hiddenSize">
+								</ul></dd>
+							</dl>
+						</div>
+						<div class="item-amount clearfix bgf5">
+							<div class="item-metatit">数量：</div>
+							<div class="amount-box">
+								<div class="amount-widget">
+									<input readonly="readonly" id="num" class="amount-input" value="1" maxlength="8" title="请输入购买量" type="text">
+									<div class="amount-btn">
+										<a onclick="addOne()" class="amount-but add"></a>
+										<a onclick="delOne()" class="amount-but sub"></a>
+									</div>
+								</div>
+								<div class="item-stock"><span style="margin-left: 10px;">库存 <b id="Stock"></b> 件</span>&nbsp;&nbsp;&nbsp;&nbsp;<span id="kucun"></span></div>
+								<script>
+									$(function () {
+										$('.amount-input').onlyReg({reg: /[^0-9]/g});
+										var stock = parseInt($('#Stock').html());
+										$('.amount-widget').on('click','.amount-but',function() {
+											var num = parseInt($('.amount-input').val());
+											if (!num) num = 0;
+											if ($(this).hasClass('add')) {
+												if (num > stock - 1){
+													return DJMask.open({
+													　　width:"300px",
+													　　height:"100px",
+													　　content:"您输入的数量超过库存上限"
+												　　});
+												}
+												$('.amount-input').val(num + 1);
+											} else if ($(this).hasClass('sub')) {
+												if (num == 1){
+													return DJMask.open({
+													　　width:"300px",
+													　　height:"100px",
+													　　content:"您输入的数量有误"
+												　　});
+												}
+												$('.amount-input').val(num - 1);
+											}
+										});
+									});
+								</script>
+							</div>
+						</div>
+						<div class="item-action clearfix bgf5">
+							<a onclick="togo()" rel="nofollow" data-addfastbuy="true" title="点击此按钮，到下一步确认购买信息。" role="button" class="item-action__buy">立即购买</a>
+							<a onclick="shoppingCar()" rel="nofollow" data-addfastbuy="true" role="button" class="item-action__basket">
+								<i class="iconfont icon-shopcart"></i> 加入购物车
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="pull-right picked-div">
+				<div class="lace-title">
+					<span class="c6">爆款推荐</span>
+				</div>
+				<div class="swiper-container picked-swiper">
+					<div class="swiper-wrapper">
+						<div class="swiper-slide">
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-1_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-2_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-3_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+						</div>
+						<div class="swiper-slide">
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-4_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-5_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-6_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+						</div>
+						<div class="swiper-slide">
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-7_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-8_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-9_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+						</div>
+						<div class="swiper-slide">
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-10_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-11_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-12_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+						</div>
+						<div class="swiper-slide">
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-3_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-4_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+							<a class="picked-item" href="">
+								<img th:src="@{/images/temp/S-001-5_s.jpg}" alt="" class="cover">
+								<div class="look_price">¥134.99</div>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="picked-button-prev"></div>
+				<div class="picked-button-next"></div>
+				<script>
+					$(document).ready(function(){ 
+						// 顶部banner轮播
+						var picked_swiper = new Swiper('.picked-swiper', {
+							loop : true,
+							direction: 'vertical',
+							prevButton:'.picked-button-prev',
+							nextButton:'.picked-button-next',
+						});
+					});
+				</script>
+			</div>
+		</section>
+		<section class="item-show__div item-show__body posr clearfix">
+			<div class="item-nav-tabs">
+				<ul class="nav-tabs nav-pills clearfix" role="tablist" id="item-tabs">
+					<li role="presentation" class="active"><a href="#detail" role="tab" data-toggle="tab" aria-controls="detail" aria-expanded="true">商品详情</a></li>
+
+				</ul>
+			</div>
+			<div class="pull-left">
+				<div class="tab-content">
+					<div role="tabpanel" class="tab-pane fade in active" id="detail" aria-labelledby="detail-tab">
+						<div class="item-detail__info clearfix">
+							<div id="one" class="record"></div>
+							<div id="two" class="record"></div>
+							<div id="three" class="record"></div>
+							<div id="four" class="record"></div>
+						</div>
+
+					</div>
+
+
+			    </div>
+				<div class="recommends">
+					<div class="lace-title type-2">
+						<span class="cr">爆款推荐</span>
+					</div>
+					<div class="swiper-container recommends-swiper">
+						<div class="swiper-wrapper">
+							<div class="swiper-slide">
+								<a class="picked-item" href="">
+									<img th:src="@{/images/temp/S-001-1_s.jpg}" alt="" class="cover">
+									<div class="look_price">¥134.99</div>
+								</a>
+								<a class="picked-item" href="">
+									<img th:src="@{/images/temp/S-001-2_s.jpg}" alt="" class="cover">
+									<div class="look_price">¥134.99</div>
+								</a>
+								<a class="picked-item" href="">
+									<img th:src="@{/images/temp/S-001-3_s.jpg}" alt="" class="cover">
+									<div class="look_price">¥134.99</div>
+								</a>
+								<a class="picked-item" href="">
+									<img th:src="@{/images/temp/S-001-4_s.jpg}" alt="" class="cover">
+									<div class="look_price">¥134.99</div>
+								</a>
+								<a class="picked-item" href="">
+									<img th:src="@{/images/temp/S-001-5_s.jpg}" alt="" class="cover">
+									<div class="look_price">¥134.99</div>
+								</a>
+							</div>
+
+							<div class="swiper-slide">
+								<a class="picked-item" href="">
+									<img src="images/temp/S-001-3_s.jpg" alt="" class="cover">
+									<div class="look_price">¥134.99</div>
+								</a>
+								<a class="picked-item" href="">
+									<img src="images/temp/S-001-4_s.jpg" alt="" class="cover">
+									<div class="look_price">¥134.99</div>
+								</a>
+								<a class="picked-item" href="">
+									<img src="images/temp/S-001-5_s.jpg" alt="" class="cover">
+									<div class="look_price">¥134.99</div>
+								</a>
+								<a class="picked-item" href="">
+									<img src="images/temp/S-001-5_s.jpg" alt="" class="cover">
+									<div class="look_price">¥134.99</div>
+								</a>
+							</div>
+						</div>
+					</div>
+					<script>
+						$(document).ready(function(){
+							var recommends = new Swiper('.recommends-swiper', {
+								spaceBetween : 40,
+								autoplay : 5000,
+							});
+						});
+					</script>
+				</div>
+			</div>
+
+			<script>
+				$(document).ready(function(){
+					$('#descCate').smartFloat(0);
+					$('.dc-idsItem').click(function() {
+						$(this).addClass('selected').siblings().removeClass('selected');
+					});
+					$('#item-tabs a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+						$('#descCate #' + $(e.target).attr('aria-controls') + '-tab')
+						.addClass('in').addClass('active').siblings()
+						.removeClass('in').removeClass('active');
+					});
+				});
+			</script>
+		</section>
+	</div>
+	<!-- 右侧菜单 -->
+	<div class="right-nav">
+		<ul class="r-with-gotop">
+			<li class="r-toolbar-item">
+				<a href="/demo/myUD" class="r-item-hd">
+					<i class="iconfont icon-user" data-badge="0"></i>
+					<div class="r-tip__box"><span class="r-tip-text">用户中心</span></div>
+				</a>
+			</li>
+			<li class="r-toolbar-item">
+				<a href="/demo/getShoppingCar" class="r-item-hd">
+					<i id="gouwuche" class="iconfont icon-cart"></i>
+					<div class="r-tip__box"><span class="r-tip-text">购物车</span></div>
+				</a>
+			</li>
+			<li class="r-toolbar-item">
+				<a href="udai_collection.html" class="r-item-hd">
+					<i class="iconfont icon-aixin"></i>
+					<div class="r-tip__box"><span class="r-tip-text">我的收藏</span></div>
+				</a>
+			</li>
+			<li class="r-toolbar-item">
+				<a href="" class="r-item-hd">
+					<i class="iconfont icon-liaotian"></i>
+					<div class="r-tip__box"><span class="r-tip-text">联系客服</span></div>
+				</a>
+			</li>
+			<li class="r-toolbar-item">
+				<a href="issues.html" class="r-item-hd">
+					<i class="iconfont icon-liuyan"></i>
+					<div class="r-tip__box"><span class="r-tip-text">留言反馈</span></div>
+				</a>
+			</li>
+			<li class="r-toolbar-item to-top">
+				<i class="iconfont icon-top"></i>
+				<div class="r-tip__box"><span class="r-tip-text">返回顶部</span></div>
+			</li>
+		</ul>
+		<script>
+			$(document).ready(function(){ $('.to-top').toTop({position:false}) });
+		</script>
+	</div>
+	<!-- 底部信息 -->
+
+	</div>
+</body>
+</html>

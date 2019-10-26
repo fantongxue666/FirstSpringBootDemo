@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>list</title>
+    <script th:src="@{/js/jquery.1.12.4.min.js}" charset="UTF-8"></script>
+</head>
+<body>
+<div>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>SEX</th>
+            <th>AGE</th>
+            <th>ADDRESS</th>
+            <th>TOGO</th>
+        </tr>
+        <tr th:each="map:${list}">
+            <td th:text="${map.id}"></td>
+            <td th:text="${map.name}"></td>
+            <td th:text="${map.sex}==0?'女':'男'"></td>
+            <td th:text="${map.age}"></td>
+            <td th:text="${map.address}"></td>
+            <td><a href="">更改</a>&nbsp;&nbsp;<a href="">删除</a></td>
+        </tr>
+    </table>
+    <a href="">新增</a>
+</div>
+</body>
+</html>

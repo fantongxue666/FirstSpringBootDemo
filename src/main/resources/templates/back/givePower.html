@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>授权页面</title>
+    <script th:src="@{/js/jquery.1.12.4.min.js}" charset="UTF-8"></script>
+
+</head>
+<body>
+<table border="4" style="margin: 50px auto;">
+    <thead>
+    <tr>
+        <th width="100px">姓名</th>
+        <th width="100px">账号</th>
+        <th width="100px">部门编号</th>
+        <th width="100px">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user:${list}">
+        <td width="100px" th:text="${user.empid}" style="display: none;"></td>
+        <td width="100px" th:text="${user.empname}"></td>
+        <td width="100px" th:text="${user.emptel}"></td>
+        <td width="100px" th:text="${user.deptno}"></td>
+        <td style="text-align: center" width="100px"><intput type="button" th:onclick="del([[${user.empid}]]);">授权</intput></td>
+    </tr>
+    </tbody>
+</table>
+<script>
+    function del(v) {
+    location.href="/power/givePower?id="+v;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>授权页面</title>
+    <script th:src="@{/js/jquery.1.12.4.min.js}" charset="UTF-8"></script>
+    <script>
+        $(function () {
+            var id=parseInt(location.href.slice(-1));
+            $.post(
+                "/power/getEmpById",
+                {"id":id},
+                function (datas) {
+                    // alert(JSON.stringify(data));
+                    $("#name").val(datas[0].empname);
+                    $("#deptno").val(datas[0].deptno);
+                    $("#account").val(datas[0].emptel);
+                    $.post(
+                        "/power/checkedTree",
+                        {deptno:datas[0].deptno},
+                        function (data) {
+                            var str="";
+
+                            //##################################
+                            for(var i=0;i<data.length;i++){
+                                if(data[i].parentId==0){
+                                    // console.log(JSON.stringify(data[i]));
+                                    if(data[i].checked=="checked"){
+                                    str+=' <li class="seconddd"><input type="checkbox" checked="checked" value="'+data[i].id+'"><a onclick="shows('+i+')" href="#">'+data[i].name+'</a><ul class="ulObj"></ul></li>';
+                                    }else{
+                                        str+=' <li class="seconddd"><input type="checkbox" value="'+data[i].id+'"><a onclick="shows('+i+')" href="#">'+data[i].name+'</a><ul class="ulObj"></ul></li>';
+
+                                    }
+                                }
+                            }
+                            //##################################
+                            $("#menu").append(str);
+
+                            //##################################
+                            for(var k=0;k<data.length;k++){
+                                var strSe="";
+                                if(data[k].children!=null){
+                                    // alert(data[i].children.length);
+                                    for (var j=0;j<data[k].children.length;j++){
+                                        if(data[k].children[j].checked=="checked"){
+                                        strSe+='<li><input type="checkbox" checked="checked" value="'+data[k].children[j].id+'"><a target="iframe" href="'+data[k].children[j].url+'">'+data[k].children[j].name+'</a></li>';
+                                        }else {
+                                            strSe+='<li><input type="checkbox" value="'+data[k].children[j].id+'"><a target="iframe" href="'+data[k].children[j].url+'">'+data[k].children[j].name+'</a></li>';
+
+                                        }
+
+                                    }
+
+                                }else if(data[k].children==null){
+
+                                }
+                                $(".seconddd .ulObj").eq(k).append(strSe);
+                            }
+                        },
+                        "json"
+                    );
+                },
+                "json"
+            );
+        });
+
+    </script>
+    <style>
+        ul{
+            list-style: none;
+        }
+    </style>
+</head>
+<body>
+<h4 style="text-align: center">请授权</h4>
+        姓名：<input style="margin-left: 32px;" type="text" id="name" disabled="disabled"><br>
+        部门编号：<input type="text" id="deptno" disabled="disabled"><br>
+        账号：<input style="margin-left: 32px;" type="text" id="account" disabled="disabled"><br>
+        <p style="color: red">请选择权限</p>
+<div id="tree">
+
+        <ul id="menu"></ul><br>
+        <input type="button" id="commit" value="保存权限">
+
+
+</div>
+<script>
+    $("#commit").click(function () {
+        var tempArr="";
+        //所有被选中的复选框的值
+       $("input:checkbox:checked").each(function (i) {
+        tempArr+=($(this).val())+",";
+       });
+      var deptno=$("#deptno").val();
+       var temp="";
+       temp=tempArr.slice(0,-1);
+        console.log(temp);
+        $.ajax({
+            url:"/power/savePower",
+            data:{tempArr:temp,deptno:deptno},
+            dataType:"json",
+            type:"post",
+            sync:false,
+            success:function (data) {
+                alert(data.success);
+            }
+        });
+    });
+</script>
+</body>
+</html>

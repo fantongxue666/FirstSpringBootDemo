@@ -1,0 +1,16 @@
+server:
+  port: 8081
+#默认使用第一个文档块，使用三个-符号回车分块嘿嘿嘿
+spring:
+  profiles:
+    active: dev
+---
+server:
+     port: 8082
+spring:
+  profiles: dev
+---
+server:
+     port: 80
+spring:
+  profiles: prod

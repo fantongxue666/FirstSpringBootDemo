@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" xmlns:th="www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>U袋网 - 登录</title>
+	<script th:src="@{/js/jquery.1.12.4.min.js}" charset="UTF-8"></script>
+	<style>
+		.login{
+			margin-left: 420px;
+			margin-top: 150px;
+			height: 300px;
+			width: 400px;
+		}
+		.h{
+			color: darkred;
+			align-items: center;
+			text-align: center;
+		}
+		form{
+			text-align: center;
+		}
+		#btn{
+			font-size: 16px;
+			margin-top: 30px;
+		}
+		.bt{
+			font-size: 16px;
+			margin-top: 4px;
+		}
+		#yzm{
+			width: 90px;
+			height: 25px;
+		}
+		#bb{
+			margin-left: 90px;
+		}
+		#dd{
+			margin-left: 50px;
+		}
+	</style>
+	<script>
+        function sub() {
+            if(zhanghao()&&mima()){
+                alert("登陆成功，去买东西吧！");
+                return true;
+            }
+            return false;
+        }
+        function zhanghao() {
+            var account=$("#account").val();
+            var span2=$("#span2");
+            if(account.length==""){
+                span2.html("手机号不可为空");
+                span2.css("color","red");
+                return false;
+            }
+            span2.html("");
+            return true;
+        }
+        function mima() {
+            var password=$("#password").val();
+            var span2=$("#span2");
+            if(password.length<6||password.length>8){
+                span2.html("密码应该设置6到8位数字");
+                span2.css("color","red");
+                return false;
+            }
+            span2.html("");
+            return true;
+        }
+
+
+	</script>
+</head>
+<body>
+<div class="login">
+
+	<h1 class="h" th:text="#{login.tip}"></h1>
+	<span id="dd" style="color: red;" th:text="${error}"></span>
+	<form action="/demo/denglu" method="post" onsubmit="return sub()">
+		手机号：<input id="account" name="account" class="bt" type="text" th:placeholder="#{login.phone}" onblur="zhanghao()"><br>
+		密码：&nbsp;&nbsp;&nbsp;<input id="password" name="password" class="bt" type="password" th:placeholder="#{login.password}" onblur="mima()"><br>
+		<span id="span2"></span>
+		<br>
+
+		<input id="btn" type="submit" value="登陆"><br><a href="/demo/register">没有账号？点这儿，注册一个</a><br>
+		<a th:href="@{/demo/login(l='zh_CN')}">中文</a>&nbsp;&nbsp;&nbsp;&nbsp;<a th:href="@{/demo/login(l='en_US')}">English</a>
+	</form>
+</div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" xmlns:th="www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>U袋网 - 注册</title>
+	<script th:src="@{/js/jquery.1.12.4.min.js}" charset="UTF-8"></script>
+	<style>
+		.login{
+			margin-left: 470px;
+			margin-top: 200px;
+			height: 200px;
+			width: 300px;
+		}
+		.h{
+			color: darkred;
+			align-items: center;
+			text-align: center;
+		}
+		form{
+			text-align: center;
+		}
+		#btn{
+			font-size: 16px;
+			margin-top: 30px;
+		}
+		.bt{
+			font-size: 16px;
+			margin-top: 4px;
+		}
+        #h3{
+            color: red;
+        }
+	</style>
+    <script>
+        function sub() {
+            if(zhanghao()&&mima()&&remima()){
+                alert("注册成功，请登陆");
+                return true;
+            }return false;
+        }
+        function zhanghao() {
+            var account=$("#account").val();
+            var span1=$("#span1");
+            if(account.length==""){
+                span1.html("手机号不可为空");
+                span1.css("color","red");
+                return false;
+            }
+            span1.html("");
+            return true;
+        }
+        function mima() {
+            var password=$("#password").val();
+            var span2=$("#span2");
+            if(password.length<6||password.length>8){
+                span2.html("密码应该设置6到8位数字");
+                span2.css("color","red");
+                return false;
+            }
+            span2.html("");
+            return true;
+        }
+        function remima(){
+            var repassword=$("#repassword").val();
+            var password=$("#password").val();
+            var span2=$("#span2");
+            if($.trim(repassword)==$.trim(password)){
+                span2.html("");
+                return true;
+            }
+            span2.html("确认密码和输入密码不一致");
+            span2.css("color","red");
+            return false;
+
+        }
+    </script>
+
+</head>
+<body>
+<div class="login">
+	<h1 class="h">U袋网商城用户注册</h1><br>
+	<form action="/demo/zhuce" method="post" onsubmit="return sub()">
+		手机号：&nbsp;&nbsp;&nbsp;<input id="account" class="bt" type="text" name="account" placeholder="请输入手机号" onblur="zhanghao()"><br>
+        <span id="span1"></span>
+		输入密码：<input id="password" class="bt" type="password" name="password" placeholder="请输入密码" onblur="mima()"><br>
+		<span id="span2"></span>
+        确认密码：<input id="repassword" class="bt" type="password" placeholder="确认密码" onblur="remima()"><br>
+        <span id="span3"></span>
+		<input id="btn" type="submit" value="注册"><a href="/demo/login">返回登陆页面</a>
+	</form>
+</div>
+
+</body>
+</html>

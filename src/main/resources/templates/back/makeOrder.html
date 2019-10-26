@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8" />
+		<title>处理订单</title>
+		<script th:src="@{/js/jquery.1.12.4.min.js}" charset="UTF-8"></script>
+		<style>
+			#margin{
+
+				float: right;
+				margin-right: 10px;
+				margin-top: 17px;
+			}
+			#ppp p{
+				float: left;
+			}
+			.span{
+				width: 15px;
+			}
+			#ppp{
+				float: right;
+				margin-right: 0px;
+				width: 100px;
+				height: 20px;
+			}
+		</style>
+
+	</head>
+	<body>
+	<span style="color: red;" th:text="${info}"></span>
+		<table border="4">
+			<thead>
+			<tr>
+				<th width="100px">序号</th>
+				<th width="100px">商品名称</th>
+				<th width="50px">颜色</th>
+				<th width="50px">价格</th>
+				<th width="100px">收货人电话</th>
+				<th width="250px">地址</th>
+
+				<th width="100px">积分</th>
+				<th width="100px">状态</th>
+				<th width="100px">数量</th>
+				<th width="100px">操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			<!-- 遍历集合，如果被遍历的变量 userList 为 null 或者不存在，则不会进行遍历，也不报错-->
+			<tr th:each="user : ${list}">
+				<!-- 将用户的主键 uId 存在在 name 属性中-->
+				<td width="100px" th:text="${user.id}"></td>
+				<td width="100px" th:text="${user.name}"></td>
+				<td width="100px" th:text="${user.color}"></td>
+				<td width="100px" th:text="${user.price}"></td>
+				<td width="100px" th:text="${user.account}"></td>
+				<td width="100px" th:text="${user.address}"></td>
+				<td width="100px" th:text="${user.score}"></td>
+				<td width="100px" th:text="${user.status}"></td>
+				<!-- 使用dates对象格式化日期-->
+				<td width="100px" th:text="${user.number}"></td>
+				<td style="text-align: center" width="100px"><intput type="button" th:onclick="del([[${user.id}]]);">确认发货</intput></td>
+			</tr>
+			</tbody>
+		</table>
+		<script>
+			function del(id) {
+				//alert(id);
+				if(confirm("发货？")){
+				    location.href="/demo/qrfh?id="+id;
+				}
+            }
+		</script>
+	</body>
+</html>

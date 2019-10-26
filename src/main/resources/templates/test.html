@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>pageHelper练习</title>
+</head>
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>地址</th>
+        <th>详细地址</th>
+        <th>电话</th>
+        <th>账号</th>
+    </tr>
+    </thead>
+    <tbody>
+
+
+    <tr th:each="user : ${list}">
+        <!-- 将用户的主键 uId 存在在 name 属性中-->
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.location}"></td>
+        <!-- 使用dates对象格式化日期-->
+        <td th:text="${user.detail}"></td>
+        <!-- 三运运算判断是否已婚-->
+        <td th:text="${user.phone}"></td>
+        <td th:text="${user.account}"></td>
+    </tr>
+    </tbody>
+</table>
+当前第 <span th:text="${list.pageNum}"></span> 页.
+总共 <span th:text="${list.pages}"></span> 页.
+一共 <span th:text="${list.total}"></span> 条记录
+<a th:href="@{/page/list?pn=1}">首页</a>
+<a th:href="@{'/page/list?pn='+${list.pageNum-1}}">上一页</a>
+<a th:href="@{'/page/list?pn='+${list.pageNum+1}}">下一页</a>
+<a th:href="@{'/page/list?pn='+${list.pages}}">尾页</a>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+
+*{
+    margin:0px auto;	
+ }
+.box{
+	margin-top:100px;
+	width:100%;
+	height:600px;
+	background:url(images/hr_login.png) no-repeat center;
+    padding-top:30px;
+}
+.cnt{
+	width:380px;
+	height:400px;
+	background:#fff;
+	
+	margin-right:100px;
+	padding:40px 40px 40px 40px;
+ }
+ 
+ #cnt_one{
+	 
+	color:#000;
+	font-size:20px; 
+	font-weight:600;
+	padding-right:120px;
+	
+}
+
+ #cnt_two{
+	color:blue;
+	font-size:18px;
+	//padding-left:50px;
+	
+ }
+ 
+ #huanying{
+	padding-bottom:10px; 
+ }
+ 
+ #oimg{
+	 padding-left:30px;
+ }
