@@ -44,7 +44,10 @@ public class SelectController {
     @Autowired
     private SelectService selectService;
 
-
+    @RequestMapping("/toChat")
+    public String toChat(){
+        return "chat";
+    }
     /**
      * 跳转主页
      *
@@ -788,7 +791,6 @@ public class SelectController {
         //返回json格式
         return jsonObject;
     }
-
 
 
 }
