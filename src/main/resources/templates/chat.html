@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://wow.techbrood.com/libs/jquery/jquery-1.11.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="./chat.css"> -->
+    <title>Document</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css?family=Roboto:100,400,700');
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+}
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: gray;
+}
+#container {
+    width: 60%;
+    height: 80%;
+    display: flex;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    min-width: 600px;
+}
+aside,
+#main {
+    flex-grow: 1;
+    height: 100%;
+    min-width: 300px;
+}
+aside {
+    background-color: #2F373F;
+}
+#main {
+    background-color: #E7EDED;
+}
+aside header {
+    background-color: #343E48;
+    padding: 10px;
+    padding-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    font-weight: bold;
+}
+aside ul {
+    padding-left: 10px;
+    list-style-type: none;
+    overflow: auto;
+}
+aside ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    color: #c0c0c0;
+    margin-bottom: 10px;
+}
+aside ul li div {
+    flex-grow: 1;
+}
+aside ul li .color {
+    border: 2px solid #2F373F;
+}
+.avatar {
+    margin-bottom: -5px;
+    margin-right: -10px;
+}
+.avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+}
+.color {
+    background-color: #4AD99B;
+    width: 8px;
+    height: 8px;
+    border-radius: 100%;
+    position: relative;
+    top: -16px;
+    right: -32px;
+    border: 2px solid #343E48;
+}
+.away {
+    background-color: #FA676A;
+}
+.main_li {
+    flex-grow: 2;
+}
+.selected {
+    border-bottom: 2px solid #fff;
+}
+.username {
+    margin-top: 5px;
+}
+.text {
+    font-size: 0.7em;
+}
+.time {
+    font-size: 0.6em;
+    flex-grow: 0.3;
+    margin-top: 10px;
+}
+#main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+#main footer {
+    background-color: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+#main footer textarea {
+    flex-grow: 2;
+    margin: 0 10px;
+    resize: none;
+    border: none;
+    padding-top: 5px;
+    height: 20px;
+}
+#main footer textarea:focus {
+    outline: none;
+}
+#main footer i {
+    color: #c0c0c0;
+    cursor: pointer;
+    cursor: hand;
+}
+#messages {
+    overflow: auto;
+    flex-grow: 2;
+    padding: 10px;
+}
+#messages article {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+#messages article .avatar {
+    margin-right: 10px;
+}
+#messages .right .avatar {
+    margin-right: 0;
+}
+.msg {
+    display: flex;
+    justify-content: space-between;
+}
+.msg .tri {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 10px 15px 0;
+    border-color: transparent #ffffff transparent transparent;
+}
+.msg_inner {
+    background-color: #fff;
+    width: 100%;
+    padding: 15px 10px;
+    border-radius: 0 4px 4px 4px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+.right {
+    flex-direction: row-reverse;
+}
+.right .msg {
+    flex-direction: row-reverse;
+}
+.right .msg .tri {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 15px 10px 0 0;
+    border-color: #ffffff transparent transparent transparent;
+}
+.right .msg .msg_inner {
+    border-radius: 4px 0 4px 4px;
+    box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: right;
+}
+#credits {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+#credits img {
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+}
+#credits span {
+    display: block;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    user-select: none;
+}
+    </style>
+</head>
+<body>
+    <section id="container">
+       
+        <section id="main">
+            <section id="messages">
+
+            </section>
+            <footer>
+                <i class="material-icons">attach_file</i>
+                <textarea id="inputMessage" placeholder="说点什么吧？"></textarea><i class="material-icons"><input type="button" value="发送" onclick="getMessage()"></i>
+            </footer>
+        </section>
+    </section>
+</body>
+<script type="text/javascript">
+	//webSocket实现聊天，客户端需要做的事情，总结起来，其实就是一下几件
+	//1，获取连接，new WebSocket()
+	//服务端地址和请求类型
+    var accounta=window.location.search;
+    var account=accounta.slice(9);
+    // alert(account);
+	var wsUrl="ws://172.20.1.181:8082/charRoomServer";
+	//客户端与服务端建立连接，建立连接以后，它会发出一个ws.open事件
+	var ws=new WebSocket(wsUrl);
+	//连接成功后，提示浏览器客户端输入名称
+	ws.onopen=function(){
+		ws.send(account);
+	}
+	//客户端收到服务端发送的消息
+	ws.onmessage=function(message){
+		//获取以后，在客户端显示
+		messages.innerHTML+=message.data;
+	}
+	
+	//获取某个用户输入的聊天内容，并发送到服务端，让服务端广播给所有人
+	 function getMessage(){
+		var inputMessage=document.getElementById("inputMessage").value;
+		//alert(inputMessage);
+		//获取消息以后，要发送给服务端，然后广播给所有用户
+		if(typeof(inputMessage)=='undefined'){
+			alert("请输入您要发送的消息！");
+		}else{
+			ws.send(inputMessage);
+			//输入框消息清空
+			inputMessage.value="";
+		}
+		
+	} 
+	//当关闭页面或者用户退出时，会执行一个ws.close()方法
+	window.onbeforeunload=function(){
+		ws.close();
+	}
+	//按回车发送信息
+	document.onkeyup=function(e){
+		if(e.keyCode==13){
+			getMessage();
+			inputMessage.value="";
+		}
+	}
+	
+</script>
+
+
+</html>
