@@ -140,6 +140,11 @@ public class SelectServiceImpl implements SelectService {
     }
 
     @Override
+    public int chatInsert(Map map) {
+        return selectMapper.chatInsert(map);
+    }
+
+    @Override
     public List<Map> dpjxx(String account) {
         return selectMapper.dpjxx(account);
     }

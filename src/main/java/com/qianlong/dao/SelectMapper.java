@@ -178,4 +178,12 @@ public interface SelectMapper {
      */
     @Select(value = "select count(*) from `order` where account=#{account} and status='已收货';")
     int dpjNum(String account);
+
+    /**
+     * 把用户发送的消息存到数据库中
+     * @param map
+     * @return
+     */
+    @Insert(value = "insert into chat(account,islook,message) values(#{account},1,#{message})")
+    int chatInsert(Map map);
 }

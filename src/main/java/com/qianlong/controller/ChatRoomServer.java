@@ -1,11 +1,14 @@
 package com.qianlong.controller;
 
+import com.qianlong.service.SelectService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -20,6 +23,8 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint(value = "/charRoomServer")
 @Component
 public class ChatRoomServer {
+    @Autowired
+    public static SelectService selectService;
     private boolean firstFlag=true;
     private Session session;
     private String userName;
@@ -74,7 +79,14 @@ public class ChatRoomServer {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-            }
+            System.err.println("#############"+userMap.get(session.getId()));
+            System.err.println("#############"+clientMessage);
+            Map map=new HashMap();
+            map.put("account",userMap.get(session.getId()));
+            map.put("message",clientMessage);
+            int i = selectService.chatInsert(map);
+            System.out.println(i);
+        }
         }
 
     /**

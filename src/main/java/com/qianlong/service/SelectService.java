@@ -147,4 +147,9 @@ List<User> getUser(User user);
      * 查询待评价数量
      */
     int dpjNum(String account);
+    /**
+     * 把用户发送的消息存到数据库中
+     * @return
+     */
+    int chatInsert(Map map);
 }
