@@ -123,7 +123,13 @@
                 },
                 "json"
             );
-
+            $.post(
+                "/demo/changeYD",
+                {account:v},
+                function (data) {
+                    console.log(data);
+                }
+            );
             //######################在点击详情里进行websocket
 
             var wsUrl="ws://192.168.50.209:8082/charRoomServer";

@@ -112,8 +112,8 @@ public class ChatRoomServer {
     public void close(Session session) {
         //当某个用户退出时，对其他用户进行广播
 //        String message=htmlMessage("系统消息", userMap.get(session.getId())+"退出了聊天室");
-//        userMap.remove(session.getId());
-//        connectMap.remove(session.getId());
+        userMap.remove(session.getId());
+        connectMap.remove(session.getId());
 //        //将消息广播给给所有的用户
 //        //Map.keySet()方法是获取到Map集合的所有的key值
 //        ChatRoomServer client=null;

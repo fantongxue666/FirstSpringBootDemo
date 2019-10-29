@@ -814,7 +814,7 @@ public class SelectController {
     public List<Map> getxiaoxi(String account){
         return selectService.getxiaoxi(account);
     }
-    @RequestMapping
+    @RequestMapping("/changeYD")
     @ResponseBody
     public int changeYD(String account){
         return selectService.changeYD(account);
