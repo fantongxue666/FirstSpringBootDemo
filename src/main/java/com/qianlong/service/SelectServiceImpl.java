@@ -145,6 +145,26 @@ public class SelectServiceImpl implements SelectService {
     }
 
     @Override
+    public int selectCount() {
+        return selectMapper.selectCount();
+    }
+
+    @Override
+    public List<Map> getWeidu() {
+        return selectMapper.getWeidu();
+    }
+
+    @Override
+    public List<Map> getxiaoxi(String account) {
+        return selectMapper.getxiaoxi(account);
+    }
+
+    @Override
+    public int changeYD(String account) {
+        return selectMapper.changeYD(account);
+    }
+
+    @Override
     public List<Map> dpjxx(String account) {
         return selectMapper.dpjxx(account);
     }

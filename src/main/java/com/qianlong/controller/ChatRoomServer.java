@@ -59,7 +59,11 @@ public class ChatRoomServer {
                 //给对应的web端发送一个文本信息
 
             try {
-                client.session.getBasicRemote().sendText(message);
+               if("超级管理员".equals(userName)){
+
+               }else{
+                   client.session.getBasicRemote().sendText(message);
+               }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -67,25 +71,37 @@ public class ChatRoomServer {
 
             firstFlag=false;
         }else {
+            String message="";
             //构造发送给客户端的提示信息
-            String message=htmlMessage(userMap.get(session.getId()),clientMessage);
+            if("超级管理员".equals(userName)){
+                 message=glyHtmlMessage(userMap.get(session.getId()),clientMessage);
+            }else{
+                 message=htmlMessage(userMap.get(session.getId()),clientMessage);
+            }
             //Map.keySet()方法是获取到Map集合的所有的key值
 
-                client=(ChatRoomServer) connectMap.get(session.getId());
-                //给对应的web端发送一个文本信息
-                try {
-                    client.session.getBasicRemote().sendText(message);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                for(String s:connectMap.keySet()){
+                    client=(ChatRoomServer) connectMap.get(s);
+                    //给对应的web端发送一个文本信息
+                    try {
+                        client.session.getBasicRemote().sendText(message);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
-            System.err.println("#############"+userMap.get(session.getId()));
-            System.err.println("#############"+clientMessage);
-            Map map=new HashMap();
-            map.put("account",userMap.get(session.getId()));
-            map.put("message",clientMessage);
-            int i = selectService.chatInsert(map);
-            System.out.println(i);
+            if("超级管理员".equals(userName)){
+
+            }else{
+                System.err.println("#############"+userMap.get(session.getId()));
+                System.err.println("#############"+clientMessage);
+                Map map=new HashMap();
+                map.put("account",userMap.get(session.getId()));
+                map.put("message",clientMessage);
+                map.put("addtime",new Date());
+                int i = selectService.chatInsert(map);
+                System.out.println(i);
+            }
         }
         }
 
@@ -128,6 +144,17 @@ public class ChatRoomServer {
         stringBuffer.append("</div>");
         stringBuffer.append("</article>");
 
+        return stringBuffer.toString();
+    }
+    /**
+     * 管理员的页面渲染
+     */
+    public String glyHtmlMessage(String userName,String message){
+        StringBuffer stringBuffer=new StringBuffer();
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        stringBuffer.append("<div class='message'><span>"+userName+"：</span>");
+        stringBuffer.append("<span>"+sf.format(new Date())+"</span>");
+        stringBuffer.append(message+"</div>");
         return stringBuffer.toString();
     }
 }

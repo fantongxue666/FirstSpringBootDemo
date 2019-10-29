@@ -179,11 +179,33 @@ public interface SelectMapper {
     @Select(value = "select count(*) from `order` where account=#{account} and status='已收货';")
     int dpjNum(String account);
 
+    //###############################################################
+
     /**
      * 把用户发送的消息存到数据库中
      * @param map
      * @return
      */
-    @Insert(value = "insert into chat(account,islook,message) values(#{account},1,#{message})")
+    @Insert(value = "insert into chat(account,islook,message,addtime) values(#{account},1,#{message},#{addtime})")
     int chatInsert(Map map);
+    /**
+     * 查看所有未读消息的条数
+     */
+    @Select(value = "select count(*) from chat where islook=1")
+    int selectCount();
+    /**
+     * 查询用户账号和对饮的未读消息的条数
+     */
+    @Select("select account,count(*) as count from chat where islook=1 group by account")
+    List<Map> getWeidu();
+    /**
+     * 根据用户账号查询未读消息
+     */
+    @Select(value = "select * from chat where account=#{account} and islook=1")
+    List<Map> getxiaoxi(String account);
+    /**
+     * 把该账号的所有未读消息改为已读
+     */
+    @Update(value = "update chat set islook=0 where account=#{account}")
+    int changeYD(String account);
 }

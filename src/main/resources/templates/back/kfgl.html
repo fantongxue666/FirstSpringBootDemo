@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>客服管理</title>
+    <script th:src="@{/js/jquery.1.12.4.min.js}" charset="UTF-8"></script>
+    <style>
+        .main{
+            width: 930px;
+            height: 525px;
+            border: 2px solid black;
+            display: flex;
+        }
+        .main nav:first-child{
+            flex: 2;
+            border: 1px solid black;
+        }
+        .main nav:last-child{
+            flex: 6;
+            border: 1px solid black;
+            display: flex;
+            flex-direction: column;
+        }
+        .ltcontent div:first-child{
+            flex: 10;
+            border: 1px solid black;
+        }
+        .ltcontent div:last-child{
+            flex: 2;
+            border: 1px solid black;
+        }
+        .yonghu{
+            width: 230px;
+            height: 60px;
+            border: 1px solid black;
+            position: relative;
+        }
+        .yonghu span{
+            margin-left: 35px;
+            height: 50px;
+            height: 160px;
+            line-height: 50px;
+        }
+        .weidu{
+            width: 28px;
+            height: 28px;
+            background-color: red;
+            color: white;
+            border-radius: 45px;
+            position: absolute;
+            right: 30px;
+            top: 12px;
+            text-align: center;
+            line-height: 28px;
+        }
+        .message{
+            width: 650px;
+            height: 30px;
+            margin-top: 20px;
+            margin-left: 20px;
+            line-height: 30px;
+        }
+        .message span:last-child{
+            float: right;
+            margin-top: 3px;
+            padding-right: 20px;
+        }
+
+        #content{
+            overflow: auto;
+        }
+        #fasong{
+            position: relative;
+        }
+        #send{
+            position: absolute;
+            right: 18px;
+            bottom: 12px;
+            color: gray;
+        }
+    </style>
+    <script>
+        var name="";
+        $(function () {
+            $.post(
+                "/demo/getName",
+                function (data) {
+                    name=data.name;
+                },
+                "json"
+            );
+            $.post(
+                "/demo/getweidu",
+                function (data) {
+                    var temp='';
+                    var count=0;
+                    var account='';
+                    for(var i=0;i<data.length;i++){
+                        temp+='<div class="yonghu" onclick="liaotian('+data[i].account+')">\n' +
+                            '            <span>'+data[i].account+'</span>\n' +
+                            '            <div id="'+data[i].account+'" class="weidu">'+data[i].count+'</div>\n' +
+                            '        </div>';
+                    }
+                    $("#nav").append(temp);
+                }
+            );
+        });
+        function liaotian(v) {
+            // alert(v);
+            $("#content").empty();
+            $("#"+v).hide();
+            $.post(
+                "/demo/getxiaoxi",
+                {account:v},
+                function (data) {
+                    // alert(JSON.stringify(data));
+                    var str='';
+                    for(var i=0;i<data.length;i++){
+                        var time=data[i].addtime.slice(0,10);
+                        str+=' <div class="message"><span>'+data[i].account+'</span>用户：<span>'+time+'</span>'+data[i].message+'</div>';
+                    }
+                    $("#content").append(str);
+                },
+                "json"
+            );
+
+            //######################在点击详情里进行websocket
+
+            var wsUrl="ws://192.168.50.209:8082/charRoomServer";
+            //客户端与服务端建立连接，建立连接以后，它会发出一个ws.open事件
+            var ws=new WebSocket(wsUrl);
+            //连接成功后，提示浏览器客户端输入名称
+            ws.onopen=function(){
+                ws.send(name);
+            }
+            //客户端收到服务端发送的消息
+            ws.onmessage=function(message){
+                //获取以后，在客户端显示
+                content.innerHTML+=message.data;
+            }
+
+            //获取某个用户输入的聊天内容，并发送到服务端，让服务端广播给所有人
+            function getMessage(){
+                var inputMessage=document.getElementById("inputMessage").value;
+                //alert(inputMessage);
+                //获取消息以后，要发送给服务端，然后广播给所有用户
+                if(typeof(inputMessage)=='undefined'){
+                    alert("请输入您要发送的消息！");
+                }else{
+                    ws.send(inputMessage);
+                    //输入框消息清空
+                    inputMessage.value="";
+                }
+
+            }
+            //当关闭页面或者用户退出时，会执行一个ws.close()方法
+            window.onbeforeunload=function(){
+                ws.close();
+            }
+            //按回车发送信息
+            document.onkeyup=function(e){
+                if(e.keyCode==13){
+                    getMessage();
+                    inputMessage.value="";
+                }
+            }
+
+            //######################
+        }
+
+
+    </script>
+</head>
+<body>
+<div class="main">
+    <nav id="nav">
+    </nav>
+    <nav class="ltcontent">
+        <div id="content">
+
+        </div>
+        <div id="fasong">
+            <textarea name="" id="inputMessage" cols="92" rows="10"></textarea>
+            <span id="send">没有发送按钮，按回车发送消息</span>
+        </div>
+    </nav>
+</div>
+</body>
+</html>

@@ -791,6 +791,33 @@ public class SelectController {
         //返回json格式
         return jsonObject;
     }
+        @RequestMapping("/kefu")
+            public String tokefu(){
+                return "back/kfgl";
+        }
 
+    //###################################################
+
+    @RequestMapping("tiaoshu")
+    @ResponseBody
+    public int getTS(){
+        int i = selectService.selectCount();
+        return i;
+    }
+    @RequestMapping("getweidu")
+    @ResponseBody
+    public List<Map> getweidu(){
+        return selectService.getWeidu();
+    }
+    @RequestMapping("/getxiaoxi")
+    @ResponseBody
+    public List<Map> getxiaoxi(String account){
+        return selectService.getxiaoxi(account);
+    }
+    @RequestMapping
+    @ResponseBody
+    public int changeYD(String account){
+        return selectService.changeYD(account);
+    }
 
 }

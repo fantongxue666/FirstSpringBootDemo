@@ -152,4 +152,20 @@ List<User> getUser(User user);
      * @return
      */
     int chatInsert(Map map);
+    /**
+     * 查看所有未读消息的条数
+     */
+    int selectCount();
+    /**
+     * 查询用户账号和对饮的未读消息的条数
+     */
+    List<Map> getWeidu();
+    /**
+     * 根据用户账号查询未读消息
+     */
+    List<Map> getxiaoxi(String account);
+    /**
+     * 把该账号的所有未读消息改为已读
+     */
+    int changeYD(String account);
 }

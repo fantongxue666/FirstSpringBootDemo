@@ -6,6 +6,14 @@
 		<script th:src="@{/js/jquery.1.12.4.min.js}" charset="UTF-8"></script>
 		<script>
 			$(function () {
+			    $.post(
+			        "/demo/tiaoshu",
+					function (data) {
+						if(data!=0){
+						    alert("您有"+data+"条未读消息，待查看！");
+						}
+                    }
+				);
 				$.post(
 				    "/demo/getName",
 					function (data) {
@@ -96,11 +104,11 @@
 		</div>
 		<div id="main">
 			<div id="lianjie">
-				<!--<nav><a href="/demo/page" target="iframe">商品管理</a></nav>-->
-				<!--<nav><a href="" target="iframe">会员管理</a></nav>-->
-				<!--<nav><a href="/demo/getOrder" target="iframe">处理订单</a></nav>-->
-				<!--<nav><a href="" target="iframe">订单审核</a></nav>-->
-				<!--<nav><a href="" target="iframe">取消订单记录</a></nav>-->
+				<nav><a href="/demo/page" target="iframe">商品管理</a></nav>
+				<nav><a href="/demo/kefu" target="iframe">客服管理</a></nav>
+				<nav><a href="/demo/getOrder" target="iframe">处理订单</a></nav>
+				<nav><a href="" target="iframe">订单审核</a></nav>
+				<nav><a href="" target="iframe">取消订单记录</a></nav>
 				<div id="tree">
 					<ul id="menu">
 						<!--    <li><a href="#">个人报表</a>-->
