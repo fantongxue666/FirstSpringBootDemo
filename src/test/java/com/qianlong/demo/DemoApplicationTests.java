@@ -1,5 +1,7 @@
 package com.qianlong.demo;
 
+import com.github.tobato.fastdfs.domain.StorePath;
+import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.qianlong.bean.Person;
 import com.qianlong.controller.SelectController;
 import com.qianlong.controller.TestController;
@@ -12,6 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 /**
  * springboot单元测试
  * 可以在测试期间很方便的类似编码一样进行自动注入等容器的功能
@@ -19,20 +25,24 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DemoApplicationTests {
-    //记录器
-   //Logger logger= LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    private FastFileStorageClient fastFileStorageClient;
 
     @Test
-    public void contextLoads() {
-        //日志的级别
-        //由低到高
-        //可以调整输出的日志级别，日志就只会在这个级别以偶的高级别生效
-        /*logger.trace("这是trace日志");
-        logger.debug("这是debug日志");
-        //springboot默认给我们使用的是info级别的日志，没有指定级别的就使用springboot默认级别的（info）
-        logger.info("这是info日志");
-        logger.warn("这是warn日志");
-        logger.error("这是error日志");*/
-
+    public void contextLoads() throws FileNotFoundException {
+        File file=new File("D://文件笔记//image//1571884758247.png");
+        //文件名
+        String fileName=file.getName();
+        //后缀名
+        String extName=fileName.substring(fileName.lastIndexOf(".")+1);
+        //创建流
+        FileInputStream fileInputStream=new FileInputStream(file);
+        //四个参数（输入流，文件大小，后缀名，null）,返回一个路径
+        StorePath storePath = fastFileStorageClient.uploadFile(fileInputStream, file.length(), extName, null);
+        //不同路径
+        System.out.println(storePath.getFullPath());
+        System.out.println(storePath.getPath());
+        System.out.println(storePath.getGroup());
     }
 }

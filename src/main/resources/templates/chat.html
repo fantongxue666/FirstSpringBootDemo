@@ -231,7 +231,7 @@ aside ul li .color {
     var accounta=window.location.search;
     var account=accounta.slice(9);
     // alert(account);
-	var wsUrl="ws://192.168.0.100:8082/charRoomServer";
+	var wsUrl="ws://127.0.0.1:8082/charRoomServer";
 	//客户端与服务端建立连接，建立连接以后，它会发出一个ws.open事件
 	var ws=new WebSocket(wsUrl);
 	//连接成功后，提示浏览器客户端输入名称

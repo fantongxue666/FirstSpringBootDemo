@@ -2,6 +2,8 @@ package com.qianlong.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.tobato.fastdfs.domain.StorePath;
+import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.qianlong.entity.Cart;
 import com.qianlong.entity.Seller;
 import com.qianlong.entity.Shangpin;
@@ -27,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -818,6 +822,30 @@ public class SelectController {
     @ResponseBody
     public int changeYD(String account){
         return selectService.changeYD(account);
+    }
+
+
+    @Autowired
+    FastFileStorageClient fastFileStorageClient;
+
+    /**
+     *fastDFS服务器测试文件上传
+     */
+    @RequestMapping("/fastdfs")
+    @ResponseBody
+    public String fastdfs(@RequestParam(value = "test") MultipartFile test) throws IOException {
+
+        //文件名
+        String fileName=test.getOriginalFilename();
+        //后缀名
+        String extName=fileName.substring(fileName.lastIndexOf(".")+1);
+        //四个参数（输入流，文件大小，后缀名，null）,返回一个路径
+        StorePath storePath = fastFileStorageClient.uploadFile(test.getInputStream(),test.getSize(), extName, null);
+        //不同路径
+        System.out.println(storePath.getFullPath());
+        System.out.println(storePath.getPath());
+        System.out.println(storePath.getGroup());
+        return "图片上传成功，并调皮的给您返回一个路径";
     }
 
 }
