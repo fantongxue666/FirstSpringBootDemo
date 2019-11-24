@@ -97,7 +97,7 @@
                     var account='';
                     for(var i=0;i<data.length;i++){
                         temp+='<div class="yonghu" onclick="liaotian('+data[i].account+')">\n' +
-                            '            <span>'+data[i].account+'</span>\n' +
+                            '            <span id="lalala">'+data[i].account+'</span>\n' +
                             '            <div id="'+data[i].account+'" class="weidu">'+data[i].count+'</div>\n' +
                             '        </div>';
                     }
@@ -105,7 +105,10 @@
                 }
             );
         });
+        var sb=null;
         function liaotian(v) {
+            // alert($("#lalala").text());
+            sb=$("#lalala").text();
             // alert(v);
             $("#content").empty();
             $("#"+v).hide();
@@ -131,13 +134,16 @@
                 }
             );
             //######################在点击详情里进行websocket
-
             var wsUrl="ws://127.0.0.1:8082/charRoomServer";
+            var allUrl=wsUrl+"/"+"超级管理员";
             //客户端与服务端建立连接，建立连接以后，它会发出一个ws.open事件
-            var ws=new WebSocket(wsUrl);
+            var ws=new WebSocket(allUrl);
+
+            //接收人userId
+            var jsrid=sb;
             //连接成功后，提示浏览器客户端输入名称
             ws.onopen=function(){
-                ws.send(name);
+                ws.send(jsrid);
             }
             //客户端收到服务端发送的消息
             ws.onmessage=function(message){

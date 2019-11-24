@@ -230,16 +230,24 @@ aside ul li .color {
 	//服务端地址和请求类型
     var accounta=window.location.search;
     var account=accounta.slice(9);
-    // alert(account);
+    //发送人id
+    var sb="18838030468";
 	var wsUrl="ws://127.0.0.1:8082/charRoomServer";
+	var allUrl=wsUrl+"/"+sb;
+	//接收人id
+	var jsrid='超级管理员';
 	//客户端与服务端建立连接，建立连接以后，它会发出一个ws.open事件
-	var ws=new WebSocket(wsUrl);
+	var ws=new WebSocket(allUrl);
 	//连接成功后，提示浏览器客户端输入名称
 	ws.onopen=function(){
-		ws.send(account);
+		ws.send(jsrid);
 	}
 	//客户端收到服务端发送的消息
 	ws.onmessage=function(message){
+        alert(JSON.stringify(message));
+	    //接收json消息，里面存放的由发送人id 接收人id
+        //判断发送人id是否和页面初始化时的接收人id是否一致，相同则说明时对方回复的消息
+
 		//获取以后，在客户端显示
 		messages.innerHTML+=message.data;
 	}
@@ -268,6 +276,13 @@ aside ul li .color {
 			getMessage();
 			inputMessage.value="";
 		}
+
+		// var msg = {
+		//     fsrid:"",
+        //     jsrid:"",
+        //     content:"";
+        // };
+
 	}
 	
 </script>

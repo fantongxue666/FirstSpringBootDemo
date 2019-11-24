@@ -13,6 +13,7 @@ import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
+import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 /**
  * 聊天室的服务端程序
@@ -20,7 +21,7 @@ import javax.websocket.server.ServerEndpoint;
  *
  */
 //声明websocket某个服务端的地址
-@ServerEndpoint(value = "/charRoomServer")
+@ServerEndpoint(value = "/charRoomServer/{param}")
 @Component
 public class ChatRoomServer {
     @Autowired
@@ -28,21 +29,26 @@ public class ChatRoomServer {
     private boolean firstFlag=true;
     private Session session;
     private String userName;
-    //key代表此次客户端的session的id，value代表此次连接对象
+    private String userId;
+
+    //接收人id
+    private String jsrid;
+    //key代表此次客户端的userId，value代表此次连接对象
     private static final HashMap<String, Object> connectMap=new HashMap<String, Object>();
     //保存所有用户昵称信息
     //key是session的id，value是用户昵称
     private static final HashMap<String, String> userMap=new HashMap<String, String>();
-
     //服务端收到客户端的连接请求，连接成功后会执行此方法
     @OnOpen
-    public void start(Session session) {
+    public void start(@PathParam(value = "param") String param, Session session) {
         this.session=session;
-        connectMap.put(session.getId(), this);
+        this.userId=param;
+        connectMap.put(param,this);
+        //connectMap.put(session.getId(), this);
     }
 
     //客户端发来的信息，服务端接收
-    @OnMessage
+    @OnMessage              //接收人userId
     public void chat(String clientMessage,Session session) {
         //firstFlag为true是第一次进入，第二次进入之后设为false
         ChatRoomServer client=null;
@@ -50,53 +56,48 @@ public class ChatRoomServer {
             this.userName=clientMessage;
             //将新进来的用户保存到用户map
             userMap.put(session.getId(), userName);
-            //构造发送给客户端的提示信息
-            String message=htmlMessage("大白机器人：","亲爱的"+userName+"，您想了解点儿啥？");
-            //将消息广播给给所有的用户
-            //Map.keySet()方法是获取到Map集合的所有的key值
-
-                client=(ChatRoomServer) connectMap.get(session.getId());
-                //给对应的web端发送一个文本信息
 
             try {
-               if("超级管理员".equals(userName)){
+               if("超级管理员".equals(userId)){
 
                }else{
+                   //构造发送给客户端的提示信息
+                   String message=htmlMessage("大白机器人：","亲爱的"+userId+"，您想了解点儿啥？");
+                   client=(ChatRoomServer) connectMap.get(userId);
+                   //给对应的web端发送一个文本信息
                    client.session.getBasicRemote().sendText(message);
                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
             firstFlag=false;
         }else {
-            String message="";
-            //构造发送给客户端的提示信息
-            if("超级管理员".equals(userName)){
-                 message=glyHtmlMessage(userMap.get(session.getId()),clientMessage);
-            }else{
-                 message=htmlMessage(userMap.get(session.getId()),clientMessage);
+            //给客服发消息
+            String message1=htmlMessage(userId,clientMessage);
+            ChatRoomServer client1  = (ChatRoomServer) connectMap.get(clientMessage);
+           if(client1!=null){
+               try {
+                   client1.session.getBasicRemote().sendText(message1);
+               } catch (IOException e) {
+                   e.printStackTrace();
+               }
+           }
+            //给普通用户自己窗口发消息
+            String message2=htmlMessage(userId,clientMessage);
+            ChatRoomServer client2  = (ChatRoomServer) connectMap.get(userId);
+            try {
+                client2.session.getBasicRemote().sendText(message2);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            //Map.keySet()方法是获取到Map集合的所有的key值
 
-                for(String s:connectMap.keySet()){
-                    client=(ChatRoomServer) connectMap.get(s);
-                    //给对应的web端发送一个文本信息
-                    try {
-                        client.session.getBasicRemote().sendText(message);
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            if("超级管理员".equals(userName)){
+
+
+            if("超级管理员".equals(userId)){
 
             }else{
-                System.err.println("#############"+userMap.get(session.getId()));
-                System.err.println("#############"+clientMessage);
                 Map map=new HashMap();
-                map.put("account",userMap.get(session.getId()));
+                map.put("account",userId);
                 map.put("message",clientMessage);
                 map.put("addtime",new Date());
                 int i = selectService.chatInsert(map);
@@ -110,22 +111,8 @@ public class ChatRoomServer {
      */
     @OnClose
     public void close(Session session) {
-        //当某个用户退出时，对其他用户进行广播
-//        String message=htmlMessage("系统消息", userMap.get(session.getId())+"退出了聊天室");
         userMap.remove(session.getId());
         connectMap.remove(session.getId());
-//        //将消息广播给给所有的用户
-//        //Map.keySet()方法是获取到Map集合的所有的key值
-//        ChatRoomServer client=null;
-//        for(String connectKey:connectMap.keySet()) {
-//            client=(ChatRoomServer) connectMap.get(connectKey);
-//            //给对应的web端发送一个文本信息
-//            try {
-//                client.session.getBasicRemote().sendText(message);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
     /**
      * 渲染页面，把信息构造好标签再发送
