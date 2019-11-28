@@ -231,7 +231,7 @@ aside ul li .color {
     var accounta=window.location.search;
     var account=accounta.slice(9);
     //发送人id
-    var sb="18838030468";
+    var sb=account;
 	var wsUrl="ws://127.0.0.1:8082/charRoomServer";
 	var allUrl=wsUrl+"/"+sb;
 	//接收人id
@@ -244,12 +244,17 @@ aside ul li .color {
 	}
 	//客户端收到服务端发送的消息
 	ws.onmessage=function(message){
-        alert(JSON.stringify(message));
-	    //接收json消息，里面存放的由发送人id 接收人id
-        //判断发送人id是否和页面初始化时的接收人id是否一致，相同则说明时对方回复的消息
+	    var shenfen=JSON.stringify(message.data).toString();
+	    var shenfens=shenfen.slice(shenfen.lastIndexOf("|")+1,-1);
+	    console.log(shenfens);
+        // //判断发送人id（就是上面接收的五个字，没办法，模拟的）是否和页面初始化时的接收人id（jsrid）是否一致，相同则说明是对方回复的消息
+        if(jsrid==shenfens||shenfens=="大白机器人："||shenfens==sb){
+            //获取以后，在客户端显示
+            messages.innerHTML+=message.data;
+        }else{
+            //不做任何操作
+        }
 
-		//获取以后，在客户端显示
-		messages.innerHTML+=message.data;
 	}
 	
 	//获取某个用户输入的聊天内容，并发送到服务端，让服务端广播给所有人
@@ -267,9 +272,9 @@ aside ul li .color {
 		
 	} 
 	//当关闭页面或者用户退出时，会执行一个ws.close()方法
-	window.onbeforeunload=function(){
-		ws.close();
-	}
+	// window.onbeforeunload=function(){
+	// 	ws.close();
+	// }
 	//按回车发送信息
 	document.onkeyup=function(e){
 		if(e.keyCode==13){

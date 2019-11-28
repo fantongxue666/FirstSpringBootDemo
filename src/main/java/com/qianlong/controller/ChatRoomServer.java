@@ -29,10 +29,9 @@ public class ChatRoomServer {
     private boolean firstFlag=true;
     private Session session;
     private String userName;
-    private String userId;
 
-    //接收人id
-    private String jsrid;
+    //发送人id
+    private String userId;
     //key代表此次客户端的userId，value代表此次连接对象
     private static final HashMap<String, Object> connectMap=new HashMap<String, Object>();
     //保存所有用户昵称信息
@@ -44,7 +43,6 @@ public class ChatRoomServer {
         this.session=session;
         this.userId=param;
         connectMap.put(param,this);
-        //connectMap.put(session.getId(), this);
     }
 
     //客户端发来的信息，服务端接收
@@ -72,27 +70,30 @@ public class ChatRoomServer {
             }
             firstFlag=false;
         }else {
+            System.err.println("clientMessage:"+userName);
             //给客服发消息
             String message1=htmlMessage(userId,clientMessage);
-            ChatRoomServer client1  = (ChatRoomServer) connectMap.get(clientMessage);
-           if(client1!=null){
+            client  = (ChatRoomServer) connectMap.get(userName);
+           if(client!=null){
                try {
-                   client1.session.getBasicRemote().sendText(message1);
+                   client.session.getBasicRemote().sendText(message1);
                } catch (IOException e) {
                    e.printStackTrace();
                }
            }
             //给普通用户自己窗口发消息
             String message2=htmlMessage(userId,clientMessage);
-            ChatRoomServer client2  = (ChatRoomServer) connectMap.get(userId);
+            client  = (ChatRoomServer) connectMap.get(userId);
             try {
-                client2.session.getBasicRemote().sendText(message2);
+                client.session.getBasicRemote().sendText(message2);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
 
-
+            /**
+             * 这是存数据库，和上面通信没关系
+             */
             if("超级管理员".equals(userId)){
 
             }else{
@@ -109,11 +110,11 @@ public class ChatRoomServer {
     /**
      * 前台js的ws.close事件，会触发后台的标注onClose的方法
      */
-    @OnClose
-    public void close(Session session) {
-        userMap.remove(session.getId());
-        connectMap.remove(session.getId());
-    }
+//    @OnClose
+//    public void close(String userId) {
+////        userMap.remove(session.getId());
+//        connectMap.remove(userId);
+//    }
     /**
      * 渲染页面，把信息构造好标签再发送
      */
@@ -130,19 +131,20 @@ public class ChatRoomServer {
         stringBuffer.append("<div class='msg_inner'>"+message+"</div>");
         stringBuffer.append("</div>");
         stringBuffer.append("</article>");
+        stringBuffer.append("|"+userName);
 
         return stringBuffer.toString();
     }
     /**
      * 管理员的页面渲染
      */
-    public String glyHtmlMessage(String userName,String message){
-        StringBuffer stringBuffer=new StringBuffer();
-        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        stringBuffer.append("<div class='message'><span>"+userName+"：</span>");
-        stringBuffer.append("<span>"+sf.format(new Date())+"</span>");
-        stringBuffer.append(message+"</div>");
-        return stringBuffer.toString();
-    }
+//    public String glyHtmlMessage(String userName,String message){
+//        StringBuffer stringBuffer=new StringBuffer();
+//        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        stringBuffer.append("<div class='message'><span>"+userName+"：</span>");
+//        stringBuffer.append("<span>"+sf.format(new Date())+"</span>");
+//        stringBuffer.append(message+"</div>");
+//        return stringBuffer.toString();
+//    }
 }
 

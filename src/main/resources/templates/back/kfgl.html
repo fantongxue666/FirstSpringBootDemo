@@ -108,8 +108,8 @@
         var sb=null;
         function liaotian(v) {
             // alert($("#lalala").text());
-            sb=$("#lalala").text();
-            // alert(v);
+            sb=v;
+             // alert(sb);
             $("#content").empty();
             $("#"+v).hide();
             $.post(
@@ -141,14 +141,24 @@
 
             //接收人userId
             var jsrid=sb;
+
             //连接成功后，提示浏览器客户端输入名称
             ws.onopen=function(){
                 ws.send(jsrid);
             }
             //客户端收到服务端发送的消息
             ws.onmessage=function(message){
-                //获取以后，在客户端显示
-                content.innerHTML+=message.data;
+                //截取到普通用户的手机号
+                var shenfen=JSON.stringify(message.data).toString();
+                var shenfens=shenfen.slice(shenfen.lastIndexOf("|")+1,-1);
+                 console.log("身份："+shenfens);
+                // //判断发送人id（就是上面接收的五个字，没办法，模拟的）是否和页面初始化时的接收人id（jsrid）是否一致，相同则说明是对方回复的消息
+                if(jsrid==shenfens||"超级管理员"==shenfens){
+                    //获取以后，在客户端显示
+                    content.innerHTML+=message.data;
+                }else{
+                    //不做任何操作
+                }
             }
 
             //获取某个用户输入的聊天内容，并发送到服务端，让服务端广播给所有人
@@ -165,10 +175,11 @@
                 }
 
             }
+            // var userId="超级管理员";
             //当关闭页面或者用户退出时，会执行一个ws.close()方法
-            window.onbeforeunload=function(){
-                ws.close();
-            }
+            // window.onbeforeunload=function(){
+            //     ws.close(userId);
+            // }
             //按回车发送信息
             document.onkeyup=function(e){
                 if(e.keyCode==13){
