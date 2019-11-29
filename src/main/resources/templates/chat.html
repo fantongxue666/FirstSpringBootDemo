@@ -272,21 +272,15 @@ aside ul li .color {
 		
 	} 
 	//当关闭页面或者用户退出时，会执行一个ws.close()方法
-	// window.onbeforeunload=function(){
-	// 	ws.close();
-	// }
+	window.onbeforeunload=function(){
+		ws.close();
+	}
 	//按回车发送信息
 	document.onkeyup=function(e){
 		if(e.keyCode==13){
 			getMessage();
 			inputMessage.value="";
 		}
-
-		// var msg = {
-		//     fsrid:"",
-        //     jsrid:"",
-        //     content:"";
-        // };
 
 	}
 	

@@ -110,11 +110,12 @@ public class ChatRoomServer {
     /**
      * 前台js的ws.close事件，会触发后台的标注onClose的方法
      */
-//    @OnClose
-//    public void close(String userId) {
-////        userMap.remove(session.getId());
-//        connectMap.remove(userId);
-//    }
+    @OnClose
+    public void close() {
+        userMap.remove(session.getId());
+        connectMap.remove(userId);
+        System.out.println("close事件的参数："+userId);
+    }
     /**
      * 渲染页面，把信息构造好标签再发送
      */
